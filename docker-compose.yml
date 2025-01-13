@@ -1,0 +1,44 @@
+services:
+  app:
+    build: .
+    image: talloo15/fr_container:latest
+    container_name: fr_container
+    ports:
+      - "50051:50051"  # Expose gRPC port for communication
+      - "50052:5000" #for flask
+    depends_on:
+      db:
+        condition: service_healthy  # Wait for the database to be healthy
+    env_file:
+      - .env
+    volumes:
+      - "./:/app"  # Map local app files to the container
+    working_dir: /app  # Set the working directory inside the container
+    restart: always  # Use "no" for development, "always" for production
+    command: python main.py  # Run the main directly
+    networks:
+      - app-network  # Ensure both services are on the same network
+
+  db:
+    image: postgres:latest
+    container_name: fr_db
+    env_file:
+      - .env
+    ports:
+      - "50053:5432"  # Expose PostgreSQL port for app access
+    volumes:
+      - postgres-data:/var/lib/postgresql/data  # Use Docker-managed volume for persistence
+    healthcheck:  # Health check to ensure the DB is ready
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always  # Use "always" for production, ensures uptime
+    networks:
+      - app-network  # Ensure both services are on the same network
+
+volumes:
+  postgres-data:
+
+networks:
+  app-network:

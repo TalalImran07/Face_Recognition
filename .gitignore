@@ -1,0 +1,9 @@
+.venv/
+*.dat
+*.jpeg
+base64_image.txt
+__pychache__/
+*.pyc
+*.pyo
+.env
+curl

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package facial_recognition;
+
+service FacialRecognitionService {
+    rpc SaveImage (SaveImageRequest) returns (SaveImageResponse);
+    rpc GetUserId (GetUserIdRequest) returns (GetUserIdResponse);
+}
+
+message SaveImageRequest {
+    string user_id = 1;
+    string image = 2; // base 64 encoded image
+}
+
+message SaveImageResponse {
+    bool success = 1;
+    string message = 2;
+    repeated int32 landmarks = 3; // Flattened landmarks
+}
+
+message GetUserIdRequest {
+    string image = 1; // base-64 encoded image
+}
+
+message GetUserIdResponse {
+    bool success = 1;
+    string message = 2;
+    int32 user_id = 3;
+}
